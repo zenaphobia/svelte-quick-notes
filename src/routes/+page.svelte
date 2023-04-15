@@ -26,7 +26,7 @@
 ]
 
 </script>
-<div class="flex flex-col lg:flex-row justify-evenly items-center w-full lg:h-[1000px]">
+<div class="flex flex-col lg:flex-row justify-evenly items-center w-full lg:h-[1000px] rubik">
     <div class="flex flex-col justify-center items-center w-full lg:max-w-screen-sm">
         <h3 class="text-5xl font-bold text-center my-2">Log in</h3>
         <p>Or <a href="/register" class="underline">register</a> if you don't have an account!</p>
@@ -54,3 +54,9 @@
         <DemoTaskCard data={task}/>
     {/each}
 </div>
+
+<style>
+    .rubik {
+        font-family: 'Rubik', sans-serif;
+    }
+</style>
