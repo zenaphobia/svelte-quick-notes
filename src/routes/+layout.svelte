@@ -3,7 +3,7 @@
     export let data
 </script>
 <!-- Navbar -->
-<div class="navbar bg-neutral">
+<div class="navbar bg-neutral px-12 rubik">
     <div class="navbar-start">
     </div>
     <div class="navbar-center">
@@ -12,7 +12,7 @@
     <div class="flex flex-row gap-4 navbar-end">
         {#if data?.profile}
         <form action="logout" method="POST">
-            <button class="btn btn-secondary">Logout</button>
+            <button class="btn btn-outline">Logout</button>
         </form>
         {:else}
         <a href="/login">
@@ -26,3 +26,9 @@
 </div>
 
 <slot />
+
+<style>
+    .rubik {
+        font-family: 'Rubik', sans-serif;
+    }
+</style>

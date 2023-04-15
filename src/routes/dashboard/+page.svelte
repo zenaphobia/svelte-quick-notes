@@ -1,7 +1,46 @@
-<script>
-export let data
-</script>
+<script lang="ts">
+import TaskCard from "../../components/TaskCard.svelte";
+import dog from '../../static/images/dog.svg';
 
-<h1>
-    You are logged in, {data.profile.name}!
-</h1>
+export let data
+let tasks = data
+let profile = data.profile
+
+</script>
+<div class="flex flex-row text-3xl my-4 self-center justify-center rubik">
+    <h3>Welcome back, <span class="font-bold">{profile.name} 👋</span></h3>
+</div>
+<div class="flex self-center justify-center align-middle w-full rubik">
+    <form action="/actions?/create" method="POST" class="flex self-center justify-center">
+        <button class="btn btn-primary">Create a new Task</button>
+    </form>
+</div>
+<div class="flex flex-row flex-wrap p-4 rubik justify-center">
+{#if tasks.items.length > 0}
+    {#each tasks.items as task, i}
+    <TaskCard data={task}/>
+    {/each}
+{:else}
+    <div class="flex flex-col w-full justify-center self-center align-middle text-center my-12">
+        <h3 class=" font-semibold text-xl">You have no tasks!</h3>
+        <p class="text-slate-500">Click the 'Create a New Task' Button to create your first task!</p>
+    </div>
+    <div class="flex justify-center self-center align-middle w-full grayscale opacity-20 my-4">
+        <img src={dog} class="h-44" alt="cute corgi sleeping">
+    </div>
+{/if}
+</div>
+
+<!-- <form action="?/task" method="POST" class="py-4">
+    <div class="form-control">
+        <label for="title">Title</label>
+        <input name="title" type="text">
+    </div>
+    <button class="btn btn-secondary">Test task</button>
+</form> -->
+
+<style>
+    .rubik {
+        font-family: 'Rubik', sans-serif;
+    }
+</style>

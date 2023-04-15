@@ -1,9 +1,9 @@
 <script lang="ts">
 
 </script>
-<div class="flex flex-col justify-center items-center w-full lg:h-[1000px]">
+<div class="flex flex-col justify-center items-center w-full lg:h-[1000px] rubik">
     <h3 class="text-5xl font-bold text-center my-2">Register Account</h3>
-    <p>Or sign in if you already have an account</p>
+    <p>Or <a href="/login" class="link">log in</a> if you already have an account</p>
     <div class="flex content-center justify-center rounded-lg p-4 m-4 w-full lg:max-w-screen-sm h[800px]">
         <div class="card w-full bg-neutral shadow-xl p-12">
             <div class="card-body">
@@ -32,3 +32,9 @@
           </div>
     </div>
 </div>
+
+<style>
+    .rubik {
+        font-family: 'Rubik', sans-serif;
+    }
+</style>

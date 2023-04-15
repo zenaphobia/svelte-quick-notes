@@ -1,7 +1,8 @@
 import PocketBase from 'pocketbase'
+import { SECRET_URL } from '$env/static/private'
 
 export const handle = async ({event, resolve}) => {
-    event.locals.pb = new PocketBase('https://alex-navarro-design.pockethost.io')
+    event.locals.pb = new PocketBase(SECRET_URL)
     event.locals.pb.authStore.loadFromCookie(event.request.headers.get('cookie') || '')
 
     if(event.locals.pb.authStore.isValid){
@@ -9,8 +10,6 @@ export const handle = async ({event, resolve}) => {
     }
 
     const response = await resolve(event)
-
-    //TODO: secure before deploying
 
     response.headers.set('set-cookie', event.locals.pb.authStore.exportToCookie())
 
