@@ -1,5 +1,7 @@
 <script lang="ts">
 
+  import { flip } from 'svelte/animate'
+
     interface Task {
         title: string,
         completed: boolean,
@@ -31,22 +33,55 @@
       dataTasks = [...dataTasks, _task]
 
       //Reordering ids and turning off is_editing
-      for(let i = 0; i < dataTasks.length; i++) {
-        dataTasks[i].id = i
-        dataTasks[i].is_editing = false
-      }
-
+      reorderList(dataTasks)
     }
 
     function deleteTask(index:number) {
       dataTasks = dataTasks.filter( item => { return item.id !== index } )
 
       //Reordering ids and turning off is_editing
-      for(let i = 0; i < dataTasks.length; i++) {
+      reorderList(dataTasks)
+    }
+
+//start of drag and drop system
+let hovering = null;
+
+const drop = (event, target) => {
+  event.dataTransfer.dropEffect = 'move';
+  const start = parseInt(event.dataTransfer.getData("text/plain"));
+  const newTracklist = dataTasks
+
+  if (start < target) {
+    newTracklist.splice(target + 1, 0, newTracklist[start]);
+    newTracklist.splice(start, 1);
+  } else {
+    newTracklist.splice(target, 0, newTracklist[start]);
+    newTracklist.splice(start + 1, 1);
+  }
+  reorderList(newTracklist)
+  dataTasks = newTracklist
+  hovering = null
+}
+
+const dragstart = (event, i) => {
+  event.dataTransfer.effectAllowed = 'move';
+  event.dataTransfer.dropEffect = 'move';
+  const start = i;
+  event.dataTransfer.setData('text/plain', start);
+}
+//end drag and drop system
+
+function reorderList(task:Task[]){
+  if(task.length <= 1){
+    task[0].id = 0
+  }
+  else{
+    for(let i = 0; i < task.length; i++) {
         dataTasks[i].id = i
         dataTasks[i].is_editing = false
-      }
     }
+  }
+}
 
 </script>
 
@@ -59,19 +94,24 @@
           {#if is_editing_title}
             <input class="input input-bordered w-full" type="text" name="title" on:blur={()=>{is_editing_title = false}} bind:value={dataTitle}>
           {:else}
-            <h2 class="card-title" on:click={()=>{is_editing_title = true}} on:keypress={()=>{is_editing_title = true}}>{dataTitle}</h2>
+            <h2 class="card-title" on:click={()=>{is_editing_title = true}} on:keyup={()=>{is_editing_title = true}}>{dataTitle}</h2>
           {/if}
           <div class="flex flex-col">
-            {#each dataTasks as task}
-              <div class="w-full flex flex-row my-1 justify-center items-center self-center">
+            {#each dataTasks as task, index (task.id)}
+              <div class:opacity-25 = {hovering === task.id} class:bg-base-100 = {hovering === task.id} class="w-full flex flex-row my-1 justify-center items-center self-center task"
+              on:dragstart={event => dragstart(event, index)}
+              on:drop|preventDefault={event=>drop(event, index)}
+              on:dragover|preventDefault
+              on:dragenter={()=>hovering = index}
+              draggable={true}>
                 <input type="checkbox" class="checkbox mr-4" name={task.title} id="" checked={task.completed} on:change={()=>{task.completed = !task.completed}}>
                 {#if task.is_editing}
-                <input type="text" class="input input-bordered w-full" bind:value={task.title} on:blur={()=>{task.is_editing = false}}>
+                  <input type="text" class="input input-bordered w-full" bind:value={task.title} on:blur={()=>{task.is_editing = false}}>
                 {:else}
-                <p class:line-through = {task.completed === true} on:click={()=>{task.is_editing = true}} on:keypress={()=>{task.is_editing = true}}>{task.title}</p>
+                  <p class:line-through = {task.completed === true} on:click={()=>{task.is_editing = true}} on:keypress={()=>{task.is_editing = true}}>{task.title}</p>
                 {/if}
-                <button class="btn btn-outline h-1 justify-center align-middle self-center ml-4" on:click={()=>{deleteTask(task.id)}}>-</button>
-            </div>
+                  <button class="btn btn-outline h-1 justify-center align-middle self-center ml-4 delete-btn" on:click={()=>{deleteTask(task.id)}}>-</button>
+              </div>
             {/each}
             <button class="btn btn-outline justify-center self-center content-center w-1/2 my-4" on:click={()=>{newTask()}}>New Task</button>
           </div>
@@ -92,8 +132,23 @@
       </div>
 </div>
 
+<svelte:window on:keydown={(e)=>{
+  if(e.keyCode === 13){
+    is_editing_title = false
+  }}}/>
+
 <style>
   *{
     transition: all 0.25s ease-in-out;
   }
+  .delete-btn{
+    opacity: 0;
+  }
+  .task:hover{
+    cursor: pointer;
+  }
+  .task:hover .delete-btn {
+    opacity: 1;
+  }
+
 </style>
