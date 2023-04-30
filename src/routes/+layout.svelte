@@ -1,10 +1,13 @@
 <script>
     import "../app.css";
     export let data
+    import 'iconify-icon'
+
 </script>
 <!-- Navbar -->
 <div class="navbar bg-neutral px-12 rubik">
     <div class="navbar-start">
+        <label for="my-drawer-2" class="btn btn-primary drawer-button lg:hidden">collections</label>
     </div>
     <div class="navbar-center">
         <a class="btn btn-ghost normal-case text-xl" href="/">Quick Notes</a>
