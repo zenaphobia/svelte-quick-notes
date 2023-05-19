@@ -20,10 +20,15 @@
     isCollectionsLoading = true
   }
   function changeCollection(index:number){
-    activeCollection = index;
+    activeCollection = index
   }
-  function renameCollection(index:number){
 
+  function deleteCollection(){
+    if(activeCollection === 0){
+      activeCollection = 0;
+      return
+    }
+    activeCollection = activeCollection - 1
   }
   </script>
 <div class="drawer drawer-mobile">
@@ -33,58 +38,67 @@
             <h3>Welcome back, <span class="font-bold">{profile.name} 👋</span></h3>
         </div>
         <div class="flex self-center justify-center w-full rubik">
-            <form action="?/create" on:submit={handleSubmit} method="POST" class="flex self-center justify-center" use:enhance>
-                <input type="hidden" name="collectionRecord" value={data.items[activeCollection].id}>
-                <button disabled={isCollectionsLoading} class="btn btn-primary">Create a new Task</button>
-            </form>
+          <form action="?/create" on:submit={handleSubmit} method="POST" class="flex self-center justify-center" use:enhance>
+              <input type="hidden" name="collectionRecord" value={data?.items[activeCollection]?.id}>
+              <button disabled={isCollectionsLoading} class:loading = {isCollectionsLoading} class="btn" class:btn-outline = {activeCollectionData?.tasks?.length > 0} class:btn-primary = {activeCollectionData?.tasks?.length === 0}>Create a new Task</button>
+          </form>
         </div>
         <div class="flex flex-row flex-wrap p-4 rubik justify-center w-full">
-            {#if activeCollectionData.expand.tasks}
-                {#each activeCollectionData.expand.tasks as task, index (activeCollectionData.expand.tasks[index].id)}
+            {#if activeCollectionData?.expand?.tasks}
+                {#each activeCollectionData?.expand?.tasks as task, index (activeCollectionData.expand.tasks[index].id)}
                   <TaskCard form={formResponse} data={task}/>
                 {/each}
             {:else}
-            <div class="fade-in">
-              <div class="flex flex-col w-full justify-center self-center text-center my-12">
-                  <h3 class=" font-semibold text-xl">You have no tasks!</h3>
-                  <p class="text-slate-500">Click the 'Create a New Task' Button to create your first task!</p>
-              </div>
-              <div class="flex justify-center self-center w-full grayscale opacity-20 my-4">
-                  <img src={dog} class="h-44" alt="cute corgi sleeping">
-              </div>
-            </div>
+              {#if tasks?.items.length !==0}
+                <div class="fade-in">
+                  <div class="flex flex-col w-full justify-center self-center text-center my-12">
+                      <h3 class=" font-semibold text-xl">You have no tasks!</h3>
+                      <p class="text-slate-500">Click the 'Create a New Task' Button to create your first task!</p>
+                  </div>
+                  <div class="flex justify-center self-center w-full grayscale opacity-20 my-4">
+                      <img src={dog} class="h-44" alt="cute corgi sleeping">
+                  </div>
+                </div>
+              {:else}
+              <span>No Collection found, please create a new collection first!</span>
+              {/if}
             {/if}
         </div>
     </div>
     <div class="drawer-side">
       <label for="my-drawer-2" class="drawer-overlay"></label>
-      <ul class="menu p-4 w-80 bg-base-200 text-base-content gap-4">
-        {#each tasks.items as collections, i}
-          <li class="flex flex-row justify-between bg-base-100 rounded-md cursor-pointer hover:bg-slate-600 active:bg-violet-600 active:text-white transition-all" on:click={()=>changeCollection(i)} on:keypress={()=>changeCollection(i)} class:bg-slate-600 = {activeCollection === i}>
-            {#if isEditingCollectionName}
-              <input class="input" bind:value={data.items[i].collection_name} on:change={()=>{col_form.requestSubmit()}} on:blur={()=>isEditingCollectionName = false}>
-            {:else}
-              <span class="active:bg-transparent hover:bg-transparent">{data.items[i].collection_name}</span>
-            {/if}
-            <div class="flex flex-row justify-between hover:bg-transparent">
-              <form action="?/renameCollection" bind:this={col_form} class="hover:bg-transparent" method="POST" use:enhance>
-                <label class="flex justify-center self-center">
-                  <iconify-icon icon="material-symbols:edit" on:click={()=>isEditingCollectionName = true} class=" transition-all cursor-pointer hover:text-slate-100" width="25px"></iconify-icon>
-                <input type="hidden" name="collection_name" value={tasks.items[i].collection_name}>
-                <input type="hidden" name="id" value={collections.id}>
-                <input type="hidden" name="author" value={collections.author}>
-              </form>
-              <form action="?/deleteCollection" class="hover:bg-transparent" method="POST" on:submit={()=>{activeCollection = activeCollection - 1; handleSubmit()}} use:enhance>
-                <label class="flex justify-center self-center">
-                  <input type="submit" class="hidden"/>
-                  <iconify-icon class=" transition-all cursor-pointer hover:text-slate-100" icon="heroicons:trash-solid" width="25px"></iconify-icon>
-                </label>
-                <input type="hidden" name="id" value={collections.id}>
-                <input type="hidden" name="author" value={collections.author}>
-              </form>
-            </div>
-          </li>
-        {/each}
+      <ul class="menu p-6 w-80 bg-base-200 text-base-content gap-4">
+        <h4 class="font-bold text-slate-400">Collections</h4>
+        {#if tasks?.items?.length !== 0}
+          {#each tasks.items as collections, i}
+            <li class="flex flex-row justify-between bg-base-100 rounded-md cursor-pointer hover:bg-slate-600 active:bg-violet-600 active:text-white transition-all" on:click={()=>changeCollection(i)} on:keypress={()=>changeCollection(i)} class:bg-slate-600 = {activeCollection === i}>
+              {#if isEditingCollectionName}
+                <input class="input input-md w-32 self-center" bind:value={data.items[i].collection_name} on:change={()=>{col_form.requestSubmit()}} on:blur={()=>isEditingCollectionName = false} on:submit={()=>isEditingCollectionName = false}>
+              {:else}
+                <span class="active:bg-transparent hover:bg-transparent">{data.items[i].collection_name}</span>
+              {/if}
+              <div class="flex flex-row justify-between hover:bg-transparent">
+                <form action="?/renameCollection" bind:this={col_form} class="hover:bg-transparent" method="POST" use:enhance>
+                  <label class="flex justify-center self-center">
+                    <iconify-icon icon="material-symbols:edit" on:click={()=>isEditingCollectionName = true} class=" transition-all cursor-pointer hover:text-slate-100" width="25px"></iconify-icon>
+                  <input type="hidden" name="collection_name" value={tasks.items[i].collection_name}>
+                  <input type="hidden" name="id" value={collections.id}>
+                  <input type="hidden" name="author" value={collections.author}>
+                </form>
+                <form action="?/deleteCollection" class="hover:bg-transparent" method="POST" on:submit={()=>{deleteCollection(); handleSubmit()}} use:enhance>
+                  <label class="flex justify-center self-center">
+                    <input type="submit" class="hidden"/>
+                    <iconify-icon class=" transition-all cursor-pointer hover:text-slate-100" icon="heroicons:trash-solid" width="25px"></iconify-icon>
+                  </label>
+                  <input type="hidden" name="id" value={collections.id}>
+                  <input type="hidden" name="author" value={collections.author}>
+                </form>
+              </div>
+            </li>
+          {/each}
+        {:else}
+        <span>No collections found :(</span>
+        {/if}
         <form action="?/createCollection" on:submit={handleSubmit} method="POST" use:enhance>
           <button disabled={isCollectionsLoading} class="btn btn-outline border-2 border-dashed btn-accent w-full">
             <iconify-icon class="px-1" icon="material-symbols:add-circle-outline" width="25px"></iconify-icon>
@@ -106,7 +120,7 @@
 {/if}
 
 <style>
-    @keyframes fadeIn {
+  @keyframes fadeIn {
     from{opacity: 0}
     to{opacity: 100;}
   }
@@ -133,5 +147,3 @@
       transform: translate(-50%, -50%);
     }
 </style>
-
-{(console.log(col_form, data.items))}

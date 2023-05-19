@@ -1,4 +1,5 @@
 import type { PageServerLoad } from './$types'
+import { error } from '@sveltejs/kit';
 import { redirect } from '@sveltejs/kit';
 import PocketBase from 'pocketbase'
 import { SECRET_URL, SECRET_ADMIN_USER, SECRET_ADMIN_PASSWORD } from '$env/static/private'
@@ -14,102 +15,118 @@ export const load = ( async ({ locals }) => {
         resultList = await locals.pb.collection(`collections_record_${userId}`).getList(1, 50,{
             expand: 'tasks'
         })
+        if(resultList.totalItems === 0){
+            throw new error('No collection, making new collection')
+        }
     }
     catch(err){
         const _pb = new PocketBase(SECRET_URL);
         await _pb.admins.authWithPassword(SECRET_ADMIN_USER, SECRET_ADMIN_PASSWORD);
         const userId = locals.user.id;
         console.log('starting collections generation')
-        const tasksCollectionBase = await _pb.collections.create({
-            name: `tasks_${userId}`,
-            type: 'base',
-            listRule: '@request.auth.id != "" && @request.auth.verified = true',
-            createRule: '@request.auth.id != "" && @request.auth.verified = true',
-            viewRule: '@request.auth.id != "" && @request.auth.verified = true',
-            updateRule: '@request.auth.id != "" && @request.auth.verified = true',
-            deleteRule: '@request.auth.id != "" && @request.auth.verified = true',
-            schema: [
-                {
-                    name: 'notes',
-                    type: 'text',
-                },
-                {
-                    name: 'title',
-                    type: 'text',
-                },
-                {
-                    name: 'task',
-                    type: 'json'
-                },
-                {
-                    name: 'due_date',
-                    type: 'date'
-                },
-                {
-                    name: 'is_trash',
-                    type: 'bool',
-                },
-                {
-                    name: 'author',
-                    type: 'text',
-                    required: true
-                },
-                {
-                    name: 'parent_collection',
-                    type: 'text',
-                    required: true
-                }
-            ],
-        });
-        const collectionBase = await _pb.collections.create({
-            name: `collections_record_${userId}`,
-            type: 'base',
-            listRule: '@request.auth.id != "" && @request.auth.verified = true',
-            createRule: '@request.auth.id != "" && @request.auth.verified = true',
-            viewRule: '@request.auth.id != "" && @request.auth.verified = true',
-            updateRule: '@request.auth.id != "" && @request.auth.verified = true',
-            deleteRule: '@request.auth.id != "" && @request.auth.verified = true',
-            schema: [
-                {
-                    name: 'collection_name',
-                    type: 'text'
-                },
-                {
-                    name: "tasks",
-                    type: 'relation',
-                    options: {
-                        collectionId: tasksCollectionBase.id,
+        let tasksCollectionBase
+
+        try {
+            const isTaskCollectionAvailable = await locals.pb.collection(`tasks_${userId}`).getList(1,50)
+            const isCollectionAvailable = await locals.pb.collection(`collections_record_${userId}`).getList(1,50)
+            resultList = isCollectionAvailable
+        } catch (error) {
+            tasksCollectionBase = await _pb.collections.create({
+                name: `tasks_${userId}`,
+                type: 'base',
+                listRule: '@request.auth.id != "" && @request.auth.verified = true',
+                createRule: '@request.auth.id != "" && @request.auth.verified = true',
+                viewRule: '@request.auth.id != "" && @request.auth.verified = true',
+                updateRule: '@request.auth.id != "" && @request.auth.verified = true',
+                deleteRule: '@request.auth.id != "" && @request.auth.verified = true',
+                schema: [
+                    {
+                        name: 'notes',
+                        type: 'text',
                     },
-                },
-                {
-                    name: 'author',
-                    type: 'text',
-                }
-            ]
-        })
-        const firstTask = await locals.pb.collection(`tasks_${userId}`).create({
-            notes: '',
-            title: 'Tasks',
-            is_trash: false,
-            author: userId,
-            task: [{
-                title: 'Task 1',
-                completed: false,
-                id: 0,
-                is_editing: false,
-            }],
-            parent_collection: collectionBase.id
-        })
-        const addTaskCollectionRecord = await locals.pb.collection(`collections_record_${userId}`).create({
-            collection_name: 'Collection 1',
-            tasks: firstTask.id,
-            author: userId
-        })
-        console.log('added first task to collection record')
-        resultList = await locals.pb.collection(`collections_record_${userId}`).getList(1, 50, {
-            expand: 'tasks'
-        })
-        console.log(resultList)
+                    {
+                        name: 'title',
+                        type: 'text',
+                    },
+                    {
+                        name: 'task',
+                        type: 'json'
+                    },
+                    {
+                        name: 'due_date',
+                        type: 'date'
+                    },
+                    {
+                        name: 'is_trash',
+                        type: 'bool',
+                    },
+                    {
+                        name: 'author',
+                        type: 'text',
+                        required: true
+                    },
+                    {
+                        name: 'parent_collection',
+                        type: 'text',
+                        required: true
+                    }
+                ],
+            });
+        }
+
+        try {
+            const isCollectionAvailable = await locals.pb.collection(`collections_record_${userId}`).getList(1,50)
+            resultList = isCollectionAvailable
+        } catch (error) {
+            console.log('No collections record found, making new one')
+            const collectionBase = await _pb.collections.create({
+                name: `collections_record_${userId}`,
+                type: 'base',
+                listRule: '@request.auth.id != "" && @request.auth.verified = true',
+                createRule: '@request.auth.id != "" && @request.auth.verified = true',
+                viewRule: '@request.auth.id != "" && @request.auth.verified = true',
+                updateRule: '@request.auth.id != "" && @request.auth.verified = true',
+                deleteRule: '@request.auth.id != "" && @request.auth.verified = true',
+                schema: [
+                    {
+                        name: 'collection_name',
+                        type: 'text'
+                    },
+                    {
+                        name: "tasks",
+                        type: 'relation',
+                        options: {
+                            collectionId: tasksCollectionBase ? tasksCollectionBase.id : isTaskCollectionAvailable.id,
+                        },
+                    },
+                    {
+                        name: 'author',
+                        type: 'text',
+                    }
+                ]
+            })
+            const firstTask = await locals.pb.collection(`tasks_${userId}`).create({
+                notes: '',
+                title: 'Tasks',
+                is_trash: false,
+                author: userId,
+                task: [{
+                    title: 'Task 1',
+                    completed: false,
+                    id: 0,
+                    is_editing: false,
+                }],
+                parent_collection: collectionBase.id
+            })
+            const addTaskCollectionRecord = await locals.pb.collection(`collections_record_${userId}`).create({
+                collection_name: 'Collection 1',
+                tasks: firstTask.id,
+                author: userId
+            })
+            resultList = await locals.pb.collection(`collections_record_${userId}`).getList(1, 50, {
+                expand: 'tasks'
+            })
+        }
     }
     return JSON.parse(JSON.stringify(resultList))
   }) satisfies PageServerLoad;
@@ -194,6 +211,19 @@ export const load = ( async ({ locals }) => {
         const formattedData = Object.fromEntries([...formData])
 
         try {
+            const _deletedRecordRef = await locals.pb.collection(`collections_record_${userId}`).getOne(`${formattedData.id}`)
+            const _remainingTasks = _deletedRecordRef.tasks
+            //If there are tasks in this collection, we are going to move them over to another collection
+            if(_remainingTasks.length > 0){
+                console.log('There are tasks in this collection')
+                const data = {
+                    collection_name: 'unsorted',
+                    tasks: _remainingTasks,
+                    author: userId
+                }
+                const unsortedCollection = await locals.pb.collection(`collections_record_${userId}`).create(data)
+            }
+            console.log(_remainingTasks)
             const deletedRecord = await locals.pb.collection(`collections_record_${userId}`).delete(formattedData.id)
             return {
                 success: true,

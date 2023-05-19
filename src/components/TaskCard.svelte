@@ -18,6 +18,7 @@
     $: isSaving = form ? !form?.success : false
     //In order add this to our hidden input field, we first need to stringify it
     $: JSONTask = JSON.stringify(dataTasks)
+    let enterClicked = false
 
     async function handleSubmit(){
       isSaving = true
@@ -90,8 +91,8 @@ function reorderList(task:Task[]){
 
 </script>
 
-<div class="flex content-center justify-center rounded-lg p-4 w-full xl:w-1/3 h[600px] fade-in">
-    <div class="card w-full bg-neutral shadow-xl">
+<div class="flex content-center justify-center rounded-lg p-4 w-full xl:w-1/2 h[600px] fade-in">
+    <div class="card w-full bg-neutral shadow-xl p-2">
         <div class="p-4 w-full">
             <textarea class="textarea textarea-primary w-full" name="notes" id="" cols="30" rows="3" bind:value={textArea} placeholder="Insert notes here..."></textarea>
         </div>
@@ -120,7 +121,7 @@ function reorderList(task:Task[]){
                   </button>
               </div>
             {/each}
-            <button class="btn btn-outline justify-center self-center content-center w-1/2 my-4 hidden-btn" on:click={()=>{newTask()}}>
+            <button class="btn justify-center self-center content-center w-1/2 my-4 hidden-btn" on:click={()=>{newTask()}}>
               <iconify-icon icon="material-symbols:add" width="25" height="25"></iconify-icon>
               New Task
             </button>
@@ -132,11 +133,11 @@ function reorderList(task:Task[]){
               <input type="hidden" name="notes" value={textArea}>
               <input type="hidden" name="task" value={JSONTask}>
               <input type="hidden" name="collectionRecord" value={data.parent_collection}>
-              <button disabled={isSaving} class="btn btn-primary">Save Changes</button>
+              <button disabled={isSaving} class:loading = {isSaving} class="btn btn-primary">Save Changes</button>
             </form>
             <form action="?/delete" on:submit={handleSubmit} method="POST" use:enhance>
               <input type="hidden" name="id" value={data.id}>
-              <button disabled={isSaving} class="btn btn-secondary">Delete</button>
+              <button disabled={isSaving} class="btn btn-secondary btn-outline">Delete</button>
             </form>
           </div>
         </div>
@@ -145,8 +146,13 @@ function reorderList(task:Task[]){
 
 <svelte:window on:keydown={(e)=>{
   if(e.keyCode === 13){
+    enterClicked = true
     is_editing_title = false
-  }}}/>
+  }
+  else{
+    enterClicked = false
+  }
+  }}/>
 
 <style>
   @keyframes fadeIn {
