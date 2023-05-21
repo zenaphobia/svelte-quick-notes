@@ -12,11 +12,11 @@
                 <iconify-icon icon="solar:notebook-outline" width="25px"></iconify-icon>
             </label>
         {:else}
-            <a class="btn btn-ghost normal-case text-xl flex lg:hidden" href="/">Quick Notes</a>
+            <a class="btn btn-ghost normal-case text-xl flex lg:hidden" href="/">PowerTasks</a>
         {/if}
     </div>
     <div class="navbar-center">
-            <a class="btn btn-ghost normal-case text-xl hidden lg:flex" href="/">Quick Notes</a>
+            <a class="btn btn-ghost normal-case text-xl hidden lg:flex" href="/">PowerTasks</a>
     </div>
     <div class="flex flex-row gap-4 navbar-end">
         <div class="hidden lg:flex lg:flex-row lg:gap-4">

@@ -31,7 +31,7 @@
     <div class="hero-content justify-between flex-col lg:flex-row-reverse w-full">
     <img src={bkg} class="rounded-lg shadow-2xl object-cover h-[400px] image-full" alt="Toast, the corgi" />
       <div class="">
-        <h1 class="text-6xl font-bold">Toasty Tasks</h1>
+        <h1 class="text-6xl font-bold">PowerTasks</h1>
         <div class="py-6">
             <p class=" text-lg">The all-in-one solution for keeping all your tasks organized on the go!</p>
         </div>
