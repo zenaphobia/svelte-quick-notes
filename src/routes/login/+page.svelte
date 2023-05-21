@@ -2,12 +2,14 @@
 import { enhance } from '$app/forms';
 import Alert from '../../components/Alert.svelte';
 export let form
+let form_obj:any
 let isSubmitClicked:boolean | undefined
 $: formResponse = form
 $: isSubmitClicked = form?.success
 
 function handleSubmit(){
     isSubmitClicked = true
+    console.log('form submitted')
 }
 </script>
 <div class="block absolute mt-auto ml-auto h-full w-full overflow-hidden">
@@ -20,7 +22,7 @@ function handleSubmit(){
         <div class="card w-full bg-neutral shadow-xl p-12">
             <div class="card-body">
                 <div class="flex flex-col justify-center items-center">
-                    <form action="?/login" method="POST" class="flex flex-col w-full gap-6 items-center" use:enhance>
+                    <form action="?/login" bind:this={form_obj} method="POST" class="flex flex-col w-full gap-6 items-center">
                         <div class="form-control w-full max-w-md">
                             <label class="label" for="email">
                                 <span class="label-text">Email</span>
@@ -34,7 +36,7 @@ function handleSubmit(){
                             <input type="password" name="password" id="" class="input w-full">
                         </div>
                         <a href="/recover" class="text-slate-500">Forgot your password?</a>
-                        <button class:loading = {isSubmitClicked} disabled={isSubmitClicked} on:click={handleSubmit} type="submit" class="btn btn-primary">Login</button>
+                        <button class:loading = {isSubmitClicked} disabled={isSubmitClicked} type="submit" class="btn btn-primary">Login</button>
                     </form>
                 </div>
             </div>

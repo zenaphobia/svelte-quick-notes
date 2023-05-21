@@ -38,11 +38,12 @@ export const actions = {
 
             //This is necessary so the redirect doesn't throw an error
             if(err.status === 301){
+                console.log('redirect pt 2')
                 // return {
                 //     success: true,
                 //     message: 'Logged in, Redirecting to Dashboard...'
                 // }
-                throw redirect(301, '/dashboard')
+                // throw redirect(302, '/dashboard')
             }
 
             let _message = ''
