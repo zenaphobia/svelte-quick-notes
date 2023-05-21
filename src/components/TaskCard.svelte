@@ -112,7 +112,7 @@ function reorderList(task:Task[]){
               draggable={true}>
                 <input type="checkbox" class="checkbox mr-4" name={task.title} id="" checked={task.completed} on:change={()=>{task.completed = !task.completed}}>
                 {#if task.is_editing}
-                  <input type="text" use:taskInit class="input input-bordered w-full"  bind:value={task.title} on:blur={()=>{task.is_editing = false}}>
+                  <input type="text" use:taskInit class="input input-bordered w-full"  bind:value={task.title} on:blur={()=>{task.is_editing = false}} on:keypress={()=>{if(enterClicked){task.is_editing = false}}}>
                 {:else}
                   <p class:line-through = {task.completed === true} on:click={()=>{task.is_editing = true}} on:keypress={()=>{task.is_editing = true}}>{task.title}</p>
                 {/if}

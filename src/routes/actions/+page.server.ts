@@ -1,5 +1,7 @@
 import { error, redirect } from '@sveltejs/kit';
 import { serializePOJOs } from './../../lib/helpers'
+import PocketBase from 'pocketbase'
+import { SECRET_URL, SECRET_ADMIN_USER, SECRET_ADMIN_PASSWORD } from '$env/static/private'
 
 export const actions = {
     create: async ({locals, request}) => {
@@ -69,5 +71,18 @@ export const actions = {
         }
         const newRecord = await locals.pb.collection(`collections_record_${userId}`).create(data)
         throw redirect(301, '/dashboard')
+    },
+    deleteAccount: async ({locals}) => {
+        const userId = locals.user.id
+        //deleting user tasks and collections first...
+        const _pb = new PocketBase(SECRET_URL);
+        await _pb.admins.authWithPassword(SECRET_ADMIN_USER, SECRET_ADMIN_PASSWORD);
+        await _pb.collections.delete(`collections_record_${userId}`)
+        await _pb.collections.delete(`tasks_${userId}`);
+        //deleting user
+        await _pb.collection('users').delete(`${userId}`);
+        locals.pb.authStore.clear()
+        locals.user = undefined
+        throw redirect(303, '/login')
     }
 }

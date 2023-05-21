@@ -3,6 +3,9 @@ import Alert from '../../components/Alert.svelte';
 export let form
 $: formResponse = form
 </script>
+<div class="block absolute mt-auto ml-auto h-full w-full overflow-hidden">
+    <div class="relative background overflow-hidden"></div>
+</div>
 <div class="flex flex-col justify-center items-center w-full lg:h-[1000px] my-12 lg:my-0 rubik fade-in">
     <h3 class="text-5xl font-bold text-center my-2">Register Account</h3>
     <p class="text-slate-500">Or <a href="/login" class="link link-primary">log in</a> if you already have an account</p>
@@ -63,6 +66,14 @@ $: formResponse = form
   }
     .rubik {
         font-family: 'Rubik', sans-serif;
+    }
+    .background {
+    background-image: url("../../static/images/bkg.svg"); /* The image used */
+    height: 100%; /* You must set a specified height */
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat; /* Do not repeat the image */
+    background-size: cover; /* Resize the background image to cover the entire container */
+    overflow: hidden;
     }
     .position-alert {
       display: block;

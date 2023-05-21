@@ -34,13 +34,12 @@
         <h1 class="text-6xl font-bold">Toasty Tasks</h1>
         <div class="py-6">
             <p class=" text-lg">The all-in-one solution for keeping all your tasks organized on the go!</p>
-            <p class=" text-slate-500">Create, update, and delete all your tasks in the cloud.</p>
         </div>
         <a href="/register"><button class="btn btn-primary">Get Started</button></a>
       </div>
     </div>
 </div>
-<div class="flex w-full justify-center py-24 rubik fade-in">
+<div class="flex w-full justify-center py-12 lg:py-32 rubik fade-in">
     <div class="flex flex-row flex-wrap w-3/4">
         <div class="w-full lg:w-1/3 px-0 lg:px-4 py-8 lg:py-0">
             <div class="flex justify-center">
@@ -74,7 +73,7 @@
 <div>
 
 </div>
-<div class="flex flex-col lg:flex-row justify-evenly items-center w-full fade-in bg-base-300 rubik p-4">
+<div class="flex flex-col lg:flex-row justify-evenly items-center w-full fade-in bg-base-300 rubik p-4 py-4 lg:py-12">
     <div class="flex flex-col content-start p-4 lg:p-0">
         <div class="flex flex-col pb-4">
             <h3 class="text-3xl font-bold pb-1">Sign up today!</h3>

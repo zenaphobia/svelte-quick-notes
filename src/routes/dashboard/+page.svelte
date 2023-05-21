@@ -12,9 +12,10 @@
   let profile = data.profile
   let activeCollection = 0
   let col_form:any;
+  let enterClicked = false
   $: activeCollectionData = tasks.items[activeCollection]
   $: isCollectionsLoading = form ? !form?.success : false
-  $: isEditingCollectionName = false;
+  $: isEditingCollectionName = false
 
   function handleSubmit(){
     isCollectionsLoading = true
@@ -73,7 +74,7 @@
           {#each tasks.items as collections, i}
             <li class="flex flex-row justify-between bg-base-100 rounded-md cursor-pointer hover:bg-slate-600 active:bg-violet-600 active:text-white transition-all" on:click={()=>changeCollection(i)} on:keypress={()=>changeCollection(i)} class:bg-slate-600 = {activeCollection === i}>
               {#if isEditingCollectionName}
-                <input class="input input-md w-32 self-center" bind:value={data.items[i].collection_name} on:change={()=>{col_form.requestSubmit()}} on:blur={()=>isEditingCollectionName = false} on:submit={()=>isEditingCollectionName = false}>
+                <input class="input input-md w-32 self-center" bind:value={data.items[i].collection_name} on:change={()=>{col_form.requestSubmit()}} on:blur={()=>isEditingCollectionName = false} on:submit={()=>isEditingCollectionName = false} on:keypress={()=>{if(enterClicked){isEditingCollectionName = false;col_form.requestSubmit()}}}>
               {:else}
                 <span class="active:bg-transparent hover:bg-transparent">{data.items[i].collection_name}</span>
               {/if}
@@ -112,6 +113,15 @@
       </ul>
     </div>
   </div>
+
+  <svelte:window on:keydown={(e)=>{
+    if(e.keyCode === 13){
+      enterClicked = true
+    }
+    else{
+      enterClicked = false
+    }
+    }}/>
 
 {#if form}
   <div class="position-alert">

@@ -1,5 +1,6 @@
 import PocketBase from 'pocketbase'
 import { SECRET_URL } from '$env/static/private'
+import { redirect } from '@sveltejs/kit';
 
 export const handle = async ({event, resolve}) => {
     event.locals.pb = new PocketBase(SECRET_URL)

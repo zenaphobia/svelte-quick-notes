@@ -1,7 +1,6 @@
 <script lang="ts">
 import { enhance } from '$app/forms';
 import Alert from '../../components/Alert.svelte';
-import { page } from '$app/stores';
 export let form
 let isSubmitClicked:boolean | undefined
 $: formResponse = form
@@ -11,6 +10,9 @@ function handleSubmit(){
     isSubmitClicked = true
 }
 </script>
+<div class="block absolute mt-auto ml-auto h-full w-full overflow-hidden">
+    <div class="relative background overflow-hidden"></div>
+</div>
 <div class="flex flex-col justify-center items-center w-full lg:h-[1000px] my-12 lg:my-0 rubik fade-in">
     <h3 class="text-5xl font-bold text-center my-2">Log in</h3>
     <p class="text-slate-500">Or <a href="/register" class="link link-primary">register</a> if you don't have an account!</p>
@@ -31,6 +33,7 @@ function handleSubmit(){
                             </label>
                             <input type="password" name="password" id="" class="input w-full">
                         </div>
+                        <a href="/recover" class="text-slate-500">Forgot your password?</a>
                         <button class:loading = {isSubmitClicked} disabled={isSubmitClicked} on:click={handleSubmit} class="btn btn-primary">Login</button>
                     </form>
                 </div>
@@ -68,6 +71,14 @@ function handleSubmit(){
       top: 90%;
       left: 50%;
       transform: translate(-50%, -50%);
+    }
+    .background {
+    background-image: url("../../static/images/bkg.svg"); /* The image used */
+    height: 100%; /* You must set a specified height */
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat; /* Do not repeat the image */
+    background-size: cover; /* Resize the background image to cover the entire container */
+    overflow: hidden;
     }
 </style>
 <!-- {(console.log(form, isSubmitClicked))} -->

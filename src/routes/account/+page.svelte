@@ -2,8 +2,18 @@
 export let data
 
 let userData = data.userData
-</script>
 
+</script>
+<input type="checkbox" id="my-modal-4" class="modal-toggle" />
+<label for="my-modal-4" class="flex modal cursor-pointer">
+  <label class="modal-box relative" for="">
+    <h3 class="text-lg font-bold">Are you sure?</h3>
+    <p class="py-4">Click the button below to delete your account.</p>
+    <div class="flex self-end">
+        <form action="actions?/deleteAccount" method="POST"><button class="flex btn btn-accent self-end">Delete Account</button></form>
+    </div>
+  </label>
+</label>
 <div class="p-4 rubik">
     <div class="flex flex-col sm:w-full md:w-1/2 lg:mx-auto justify-center content-center m-auto my-24 rounded-lg bg-neutral p-16">
         <div class="flex flex-col mb-8">
@@ -26,29 +36,14 @@ let userData = data.userData
             </div>
         </div>
         <div class="flex flex-row flex-wrap content-center my-4">
-            <button class="btn btn-primary m-1">Make changes</button>
+            <!-- <button class="btn btn-primary m-1">Make changes</button> -->
             <label for="my-modal-4" class="btn btn-accent btn-outline m-1">Delete Account</label>
         </div>
     </div>
 </div>
-
-<!-- The button to open modal -->
-
-<!-- Put this part before </body> tag -->
-<input type="checkbox" id="my-modal-4" class="modal-toggle" />
-<label for="my-modal-4" class="flex modal cursor-pointer">
-  <label class="modal-box relative" for="">
-    <h3 class="text-lg font-bold">Are you sure?</h3>
-    <p class="py-4">Click the button below to delete your account.</p>
-    <div class="flex self-end">
-        <button class="flex btn btn-accent self-end">Delete Account</button>
-    </div>
-  </label>
-</label>
 
 <style>
     .rubik {
         font-family: 'Rubik', sans-serif;
     }
 </style>
-{(console.log(data))}
