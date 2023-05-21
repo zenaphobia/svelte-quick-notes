@@ -34,7 +34,7 @@ function handleSubmit(){
                             <input type="password" name="password" id="" class="input w-full">
                         </div>
                         <a href="/recover" class="text-slate-500">Forgot your password?</a>
-                        <button class:loading = {isSubmitClicked} disabled={isSubmitClicked} on:click={handleSubmit} class="btn btn-primary">Login</button>
+                        <button class:loading = {isSubmitClicked} disabled={isSubmitClicked} on:click={handleSubmit} type="submit" class="btn btn-primary">Login</button>
                     </form>
                 </div>
             </div>
