@@ -83,4 +83,3 @@ function handleSubmit(){
     overflow: hidden;
     }
 </style>
-<!-- {(console.log(form, isSubmitClicked))} -->
